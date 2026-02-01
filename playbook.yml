@@ -1,0 +1,72 @@
+---
+- name: Install Docker and Jenkins ONLY if missing (idempotent)
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Ensure Python Docker SDK is installed
+      apt:
+        name: python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Install basic dependencies
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Add Docker GPG key (only if not present)
+      shell: |
+        mkdir -p /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      args:
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Add Docker repository (only if not present)
+      shell: |
+        echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+        https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Install Docker packages
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create Jenkins Docker volume (only if missing)
+      community.docker.docker_volume:
+        name: jenkins_home
+
+    - name: Run Jenkins container (won't recreate if exists)
+      community.docker.docker_container:
+        name: jenkins
+        image: jenkins/jenkins:lts
+        state: started
+        restart_policy: unless-stopped
+        published_ports:
+          - "8080:8080"
+          - "50000:50000"
+        volumes:
+          - jenkins_home:/var/jenkins_home
+          - /var/run/docker.sock:/var/run/docker.sock

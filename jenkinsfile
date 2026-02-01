@@ -1,0 +1,61 @@
+
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL    = "https://github.com/Abhihawkz/mini-project.git"
+        IMAGE_NAME  = "abhidev333/frontend"
+        IMAGE_TAG   = "latest"
+        DOCKER_CREDS = "dockerhub-creds"
+    }
+
+    stages {
+
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: "${REPO_URL}"
+            }
+        }
+
+        stage('Build Frontend Docker Image') {
+            steps {
+                dir('frontend') {
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKER_CREDS}",
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+            }
+        }
+
+        stage('Push Image to Docker Hub') {
+            steps {
+                sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+            }
+        }
+
+        stage('Cleanup Local Image') {
+            steps {
+                sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Frontend image built from /frontend folder and pushed"
+        }
+        failure {
+            echo "❌ Pipeline failed"
+        }
+    }
+}
