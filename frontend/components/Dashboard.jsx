@@ -44,7 +44,7 @@ export default function Dashboard() {
       <header className="border-b border-zinc-800/50 px-4 py-3">
         <div className="max-w-3xl mx-auto flex justify-between items-center">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">dawChat</h1>
+            <h1 className="text-xl font-semibold tracking-tight">Agon</h1>
           </div>
           <div className="flex gap-2">
             <button
@@ -57,7 +57,7 @@ export default function Dashboard() {
               onClick={handleLogout}
               className="text-zinc-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-zinc-900 transition-all duration-200 text-sm"
             >
-              go out from here
+              Log Out Man
             </button>
           </div>
         </div>
