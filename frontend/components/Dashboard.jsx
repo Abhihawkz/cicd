@@ -248,7 +248,7 @@ export default function Dashboard() {
             </div>
           </div>
           <p className="text-xs text-zinc-600 text-center mt-3 px-2">
-            Ai can make mistakes. Consider checking important information.
+            AI can make mistakes. Consider checking Important Information.
           </p>
         </form>
       </div>
