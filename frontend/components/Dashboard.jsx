@@ -45,7 +45,7 @@ export default function Dashboard() {
         <div className="max-w-3xl mx-auto flex justify-between items-center">
           <div>
             <h1 className="text-xl font-semibold tracking-tight">
-              harsha
+              Agon
             </h1>
           </div>
           <div className="flex gap-2">
