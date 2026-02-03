@@ -16,10 +16,11 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     networks:
       - chat-network
 
