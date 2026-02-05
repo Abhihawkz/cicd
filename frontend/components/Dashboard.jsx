@@ -57,7 +57,7 @@ export default function Dashboard() {
               onClick={handleLogout}
               className="text-zinc-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-zinc-900 transition-all duration-200 text-sm"
             >
-              You Can GO out
+              Logout
             </button>
           </div>
         </div>
